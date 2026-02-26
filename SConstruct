@@ -623,8 +623,12 @@ for variant_path in variant_paths:
               "above you will need to ease fix SConstruct and ",
               "src/SConscript to support that compiler.")))
 
+    #if env['GCC']:
+    #    if compareVersions(env['CXXVERSION'], "10") < 0:
+    #        error('gcc version 10 or newer required.\n'
+    #              'Installed version:', env['CXXVERSION'])
     if env['GCC']:
-        if compareVersions(env['CXXVERSION'], "10") < 0:
+        if compareVersions(env['CXXVERSION'], "9") < 0:
             error('gcc version 10 or newer required.\n'
                   'Installed version:', env['CXXVERSION'])
 
