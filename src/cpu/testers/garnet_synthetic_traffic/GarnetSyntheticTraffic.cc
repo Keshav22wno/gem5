@@ -53,6 +53,7 @@ bool
 GarnetSyntheticTraffic::CpuPort::recvTimingResp(PacketPtr pkt)
 {
     tester->completeRequest(pkt);
+    //DPRINTF(GarnetSyntheticTraffic,"k_flag_gst recvTimingResp: cpuid=%d, pkt=%d\n",id,pkt);
     return true;
 }
 
@@ -66,8 +67,14 @@ void
 GarnetSyntheticTraffic::sendPkt(PacketPtr pkt)
 {
     if (!cachePort.sendTimingReq(pkt)) {
+    	//DPRINTF(GarnetSyntheticTraffic,"k_flag_gst sendPkt: cpuid=%d, pkt=%d, numPacketsSent=%d\n",id,pkt,numPacketsSent);
         retryPkt = pkt; // RubyPort will retry sending
     }
+    // keshav code
+    else {
+    	//DPRINTF(GarnetSyntheticTraffic,"k_flag_gst sendPkt: noretry cpuid=%d, pkt=%d, numPacketsSent=%d\n",id,pkt,numPacketsSent);
+    }
+    // keshav code ends
     numPacketsSent++;
 }
 
@@ -141,7 +148,8 @@ GarnetSyntheticTraffic::completeRequest(PacketPtr pkt)
 
 void
 GarnetSyntheticTraffic::tick()
-{
+{   
+    //DPRINTF(GarnetSyntheticTraffic,"k_flag_gst current noResponseCycles %d, responseLimit %d, injRate%f \n", (1+noResponseCycles), responseLimit,injRate);
     if (++noResponseCycles >= responseLimit) {
         fatal("%s deadlocked at cycle %d\n", name(), curTick());
     }
@@ -157,7 +165,7 @@ GarnetSyntheticTraffic::tick()
         sendAllowedThisCycle = true;
     else
         sendAllowedThisCycle = false;
-
+    //DPRINTF(GarnetSyntheticTraffic,"k_flag_gst Packet injection allowed or not %d, Curtick: %d \n", sendAllowedThisCycle, curTick());
     // always generatePkt unless fixedPkts or singleSender is enabled
     if (sendAllowedThisCycle) {
         bool senderEnable = true;
@@ -237,6 +245,10 @@ GarnetSyntheticTraffic::generatePkt()
         dest_x = (src_x + (int) ceil(radix/2) - 1) % radix;
         dest_y = src_y;
         destination = dest_y*radix + dest_x;
+    } else if (traffic == HOT_SPOT_) { // keshav_developer not exact hot spot traffic
+        dest_x = radix/2;
+        dest_y = radix/2;
+        destination = dest_y*radix + dest_x;
     }
     else {
         fatal("Unknown Traffic Type: %s!\n", traffic);
@@ -314,8 +326,8 @@ GarnetSyntheticTraffic::generatePkt()
     //We just do timing simulation of the network
 
     DPRINTF(GarnetSyntheticTraffic,
-            "Generated packet with destination %d, embedded in address %x\n",
-            destination, req->getPaddr());
+            "Generated packet with destination %d, embedded in address %x, in vnet=%d\n",
+            destination, req->getPaddr(), injReqType);
 
     PacketPtr pkt = new Packet(req, requestType);
     pkt->dataDynamic(new uint8_t[req->getSize()]);
@@ -335,14 +347,20 @@ GarnetSyntheticTraffic::initTrafficType()
     trafficStringToEnum["tornado"] = TORNADO_;
     trafficStringToEnum["transpose"] = TRANSPOSE_;
     trafficStringToEnum["uniform_random"] = UNIFORM_RANDOM_;
+    trafficStringToEnum["hot_spot"] = HOT_SPOT_;
 }
 
 void
 GarnetSyntheticTraffic::doRetry()
 {
     if (cachePort.sendTimingReq(retryPkt)) {
+    	//DPRINTF(GarnetSyntheticTraffic,"k_flag_gst success doRetry: cpuid=%d, retrypkt=%d\n",id,&retryPkt);
         retryPkt = NULL;
-    }
+    } 
+    // keshav code
+    else {
+    	//DPRINTF(GarnetSyntheticTraffic,"k_flag_gst failure doRetry: cpuid=%d, retrypkt=%d\n",id,&retryPkt);
+	}
 }
 
 void

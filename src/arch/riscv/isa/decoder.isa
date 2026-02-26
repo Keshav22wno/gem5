@@ -535,6 +535,25 @@ decode QUADRANT default Unknown::unknown() {
         }
     }
     0x3: decode OPCODE5 {
+	
+	0x1d: decode FUNCT3 {
+		0x0: decode FUNCT7 {
+			format ROp {
+			0x20: add16({{
+				uint16_t Rd_16=(uint16_t)(Rs1_ud)+(uint16_t)(Rs2_ud);
+				uint16_t Rd_32=(uint16_t)(Rs1_ud >> 16)+(uint16_t)(Rs2_ud >> 16);
+				uint16_t Rd_48=(uint16_t)(Rs1_ud >> 32)+(uint16_t)(Rs2_ud >> 32);
+				uint16_t Rd_64=(uint16_t)(Rs1_ud >> 48)+(uint16_t)(Rs2_ud >> 48);
+				uint64_t result = Rd_64;
+				result= result << 16 | Rd_48;
+				result= result << 16 | Rd_32;
+				result= result << 16 | Rd_16;
+				Rd = result;
+			}}, IntAluOp);
+			}
+		     }
+	      }
+
         0x00: decode FUNCT3 {
             format Load {
                 0x0: lb({{

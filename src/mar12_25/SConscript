@@ -1,0 +1,12 @@
+# In every scons script
+Import("*")
+
+# implies we have a new simobject
+# firstargument is name of python file we want to include in the compilation process.
+# second parameter is list of simobject defined in this file
+SimObject("HelloSimObject.py",sim_objects=["HelloSimObject"])
+
+# Tell the compiler where to find the source code
+Source("hello_sim_object.cc")
+
+DebugFlag("HelloExampleFlag")

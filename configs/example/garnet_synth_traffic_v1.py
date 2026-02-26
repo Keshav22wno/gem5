@@ -26,7 +26,7 @@
 #
 # Author: Tushar Krishna
 
-
+'''
 
 import argparse
 import os
@@ -76,6 +76,14 @@ parser.add_argument(
                         Takes decimal value between 0 to 1 (eg. 0.225). \
                         Number of digits after 0 depends upon --precision.",
 )
+
+parser.add_argument(
+    "--debug_file",
+    type=str,
+    default="/home/docker_share/debug_log.txt",
+    help="file to store printouts of debug flag"
+)
+
 
 parser.add_argument(
     "--precision",
@@ -141,13 +149,14 @@ cpus = [
         inj_vnet=args.inj_vnet,
         precision=args.precision,
         num_dest=args.num_dirs,
+        response_limit=args.garnet_deadlock_threshold,
     )
     for i in range(args.num_cpus)
 ]
 
 # create the desired simulated system
+print(f"AddrRange(args.mem_size):{[AddrRange(args.mem_size)]})")
 system = System(cpu=cpus, mem_ranges=[AddrRange(args.mem_size)])
-
 
 # Create a top-level voltage domain and clock domain
 system.voltage_domain = VoltageDomain(voltage=args.sys_voltage)
@@ -162,6 +171,8 @@ Ruby.create_system(args, False, system)
 system.ruby.clk_domain = SrcClockDomain(
     clock=args.ruby_clock, voltage_domain=system.voltage_domain
 )
+#system.printSystems()
+#ystem.print_systems()
 
 i = 0
 for ruby_port in system.ruby._cpu_ports:
@@ -189,4 +200,5 @@ exit_event = m5.simulate(args.abs_max_tick)
 
 print("Exiting @ tick", m5.curTick(), "because", exit_event.getCause())
 
+'''
 
