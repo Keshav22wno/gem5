@@ -84,6 +84,8 @@ CrossbarSwitch::wakeup()
 
             // This will take care of waking up the Network Link
             // in the next cycle
+            DPRINTF(RubyNetwork,"k_flag_rn Crossbar Activity: %d of router %d at time: %lld\n", m_crossbar_activity,m_router->get_id(),
+            m_router->curCycle());
             m_router->getOutputUnit(outport)->insert_flit(t_flit);
             switch_buffer.getTopFlit();
             m_crossbar_activity++;
