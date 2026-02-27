@@ -25,7 +25,6 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 #ifndef __CPU_GARNET_SYNTHETIC_TRAFFIC_HH__
 #define __CPU_GARNET_SYNTHETIC_TRAFFIC_HH__
 
@@ -44,7 +43,9 @@
 namespace gem5
 {
 
-enum TrafficType {BIT_COMPLEMENT_ = 0,
+enum TrafficType
+{
+                  BIT_COMPLEMENT_ = 0,
                   BIT_REVERSE_ = 1,
                   BIT_ROTATION_ = 2,
                   NEIGHBOR_ = 3,
@@ -53,7 +54,8 @@ enum TrafficType {BIT_COMPLEMENT_ = 0,
                   TRANSPOSE_ = 6,
                   UNIFORM_RANDOM_ = 7,
                   HOT_SPOT_ = 8,
-                  NUM_TRAFFIC_PATTERNS_};
+                  NUM_TRAFFIC_PATTERNS_
+};
 
 class Packet;
 class GarnetSyntheticTraffic : public ClockedObject
