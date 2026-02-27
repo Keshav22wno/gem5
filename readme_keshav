@@ -1,0 +1,1 @@
+1. we are biulding using gcc-9. Or go and check in scons line number 630. We chage the code to work with gcc-9 rather than requiring gcc-10.
